@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Gestor de Pendientes</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="min-h-screen bg-zinc-950 text-zinc-100 antialiased">
+        <section class="max-w-2xl mx-auto py-10 px-5">
+            <header class="mb-6 border-b border-zinc-800 pb-5">
+                <span class="text-xs font-bold uppercase tracking-widest text-violet-400">Panel de Control</span>
+                <h1 class="text-2xl font-extrabold mt-1">Filtrar Tareas</h1>
+                <p class="text-zinc-400 text-sm mt-1">Busca actividades por su título o la categoría a la que pertenecen.</p>
+            </header>
+
+            <div class="relative mb-6">
+                <input
+                    id="campo-filtro"
+                    type="text"
+                    placeholder="Escribe para filtrar..."
+                    class="w-full bg-zinc-900 border border-zinc-700/80 rounded-lg px-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 transition-all">
+            </div>
+
+            <section id="contenedor-items" class="flex flex-col gap-3"></section>
+        </section>
+
+        <script>
+            const listadoActividades = [
+                { id: 1, titulo: "Preparar informe semanal", categoria: "Trabajo", estado: "En progreso" },
+                { id: 2, titulo: "Revisar diseño de la página", categoria: "Diseño", estado: "Pendiente" },
+                { id: 3, titulo: "Actualizar documentación", categoria: "Desarrollo", estado: "Completada" },
+                { id: 4, titulo: "Planificar reunión de equipo", categoria: "Trabajo", estado: "Pendiente" },
+                { id: 5, titulo: "Corregir errores de búsqueda", categoria: "Desarrollo", estado: "En progreso" }
+            ];
+
+            const inputFiltro = document.getElementById("campo-filtro");
+            const vistaLista = document.getElementById("contenedor-items");
+
+            const mostrarItems = (filtro = "") => {
+                const textoBuscado = filtro.trim().toLowerCase();
+                
+                const elementosFiltrados = listadoActividades.filter(item => {
+                    const matchTitulo = item.titulo.toLowerCase().includes(textoBuscado);
+                    const matchCategoria = item.categoria.toLowerCase().includes(textoBuscado);
+                    return matchTitulo || matchCategoria;
+                });
+
+                if (elementosFiltrados.length === 0) {
+                    vistaLista.innerHTML = `
+                        <div class="bg-zinc-900/60 border border-zinc-800 rounded-lg p-5 text-center text-zinc-500 text-sm">
+                            No hay tareas que coincidan con la búsqueda.
+                        </div>
+                    `;
+                    return;
+                }
+
+                vistaLista.innerHTML = elementosFiltrados.map(item => `
+                    <article class="bg-zinc-900 border border-zinc-800 rounded-lg p-4 flex items-center justify-between gap-4">
+                        <div>
+                            <h3 class="font-medium text-zinc-100 text-sm">${item.titulo}</h3>
+                            <span class="text-xs text-zinc-400 mt-0.5 block">Categoría: ${item.categoria}</span>
+                        </div>
+                        <span class="px-2.5 py-1 text-xs font-semibold rounded-md bg-violet-950/60 border border-violet-800/40 text-violet-300 whitespace-nowrap">
+                            ${item.estado}
+                        </span>
+                    </article>
+                `).join("");
+            };
+
+            inputFiltro.addEventListener("keyup", (e) => mostrarItems(e.target.value));
+
+            // Carga inicial
+            mostrarItems();
+        </script>
+    </body>
+</html>
